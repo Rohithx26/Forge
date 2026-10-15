@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useStore, loadActive, saveActive } from '../lib/store';
+import { useStore, loadActive, saveActive, loadSwap, saveSwap } from '../lib/store';
 import { isoDate, neglectedMuscles, suggestToday, weekStart, weekStreak, workoutVolume } from '../lib/training';
 import { workoutFromDay, prTimeline } from '../lib/session';
 import { MUSCLE_LABEL } from '../data/exercises';
@@ -15,9 +15,10 @@ export default function Home() {
   const store = useStore();
   const { profile, split, workouts, exercises, weights } = store;
   const nav = useNavigate();
-  const [offset, setOffset] = useState(0);
-  const [weighIn, setWeighIn] = useState(false);
   const today = isoDate();
+  const [offset, setOffsetState] = useState(() => loadSwap(today));
+  const setOffset = (o: number) => { saveSwap(today, o); setOffsetState(o); };
+  const [weighIn, setWeighIn] = useState(false);
   const active = loadActive();
 
   const sug = useMemo(() => suggestToday(split!, workouts, today, offset), [split, workouts, today, offset]);
@@ -30,6 +31,12 @@ export default function Home() {
   const loggedToday = weights.some((w) => w.date === today);
   const eatenToday = dayTotals(store.food, today).kcal;
   const target = Math.round(energyForProfile(profile!).target);
+
+  function swap() {
+    const next = suggestToday(split!, workouts, today, offset + 1).dayKey;
+    const name = next === 'rest' ? 'a rest day' : split!.days.find((d) => d.key === next)?.name ?? next;
+    if (confirm(`Swap today's workout from ${day?.name ?? 'rest'} to ${name}? It stays swapped for the rest of today.`)) setOffset(offset + 1);
+  }
 
   function start(dayKey: string) {
     if (active && !confirm('You have a workout in progress. Discard it and start a new one?')) return;
@@ -69,7 +76,7 @@ export default function Home() {
             <div className="flex items-center justify-between">
               <div className="eyebrow">{sug.trainedToday ? 'Today · done' : "Today's workout"} · {split!.short}</div>
               {!sug.trainedToday && (
-                <button className="text-xs font-semibold text-muted hover:text-ink flex items-center gap-1" onClick={() => setOffset(offset + 1)}>
+                <button className="text-xs font-semibold text-muted hover:text-ink flex items-center gap-1" onClick={swap}>
                   <Icon name="swap" className="w-3.5 h-3.5" /> Swap
                 </button>
               )}

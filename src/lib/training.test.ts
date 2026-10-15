@@ -49,6 +49,10 @@ describe('suggestToday', () => {
   });
   it('swap offset moves to the next day', () => {
     expect(suggestToday(ppl, [], '2026-10-15', 1).dayKey).toBe('pull');
+    // swapped to pull and did it: stays done, not swapped again
+    const done = suggestToday(ppl, [W('a', '2026-10-15', 'pull')], '2026-10-15', 1);
+    expect(done.trainedToday).toBe(true);
+    expect(done.dayKey).toBe('pull');
   });
   it('ignores workouts from other splits', () => {
     expect(suggestToday(ppl, [W('a', '2026-10-14', 'upper', 'ul')], '2026-10-15').dayKey).toBe('push');

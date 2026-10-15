@@ -145,4 +145,13 @@ export function saveActive(w: Workout | null) {
   try { if (w) localStorage.setItem(ACTIVE_KEY, JSON.stringify(w)); else localStorage.removeItem(ACTIVE_KEY); } catch { /* ignore */ }
 }
 
+/* -------- today's workout swap, kept for the rest of the day -------- */
+const SWAP_KEY = 'forge-swap';
+export function loadSwap(today: string): number {
+  try { const s = JSON.parse(localStorage.getItem(SWAP_KEY) || 'null'); return s?.date === today ? s.offset : 0; } catch { return 0; }
+}
+export function saveSwap(today: string, offset: number) {
+  try { localStorage.setItem(SWAP_KEY, JSON.stringify({ date: today, offset })); } catch { /* ignore */ }
+}
+
 export const uid = () => (crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2) + Date.now().toString(36));

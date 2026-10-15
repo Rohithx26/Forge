@@ -53,7 +53,8 @@ export function suggestToday(split: SplitTemplate, history: Workout[], today: st
   for (const w of done) pos = nextIndexOf(rot, w.dayKey!, pos);
 
   const doneToday = done.filter((w) => w.date === today);
-  if (doneToday.length && offset === 0) {
+  // a saved swap must not move today's suggestion again once the swapped workout is done
+  if (doneToday.length) {
     return { dayKey: rot[pos], index: pos, reason: 'Done for today — nice work.', trainedToday: true };
   }
 

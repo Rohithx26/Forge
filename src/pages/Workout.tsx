@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useStore, loadActive, saveActive } from '../lib/store';
+import { useStore, loadActive, saveActive, loadSwap } from '../lib/store';
 import { detectPRs, isoDate, suggestToday, workingSets, workoutVolume } from '../lib/training';
 import { blankWorkout, workoutFromDay } from '../lib/session';
 import type { PR, Workout } from '../lib/types';
@@ -22,7 +22,7 @@ export default function WorkoutPage() {
 /* ---------------- start ---------------- */
 function StartScreen({ onStart }: { onStart: (w: Workout) => void }) {
   const { split, workouts, exercises, wUnit, w } = useStore();
-  const sug = suggestToday(split!, workouts, isoDate());
+  const sug = suggestToday(split!, workouts, isoDate(), loadSwap(isoDate()));
   const [view, setView] = useState<Workout | null>(null);
   const start = (wk: Workout) => { unlockAudio(); onStart(wk); };
 
