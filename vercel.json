@@ -1,1 +1,31 @@
-{ "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }] }
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "routes": [
+    {
+      "src": "/(?:.*/)?(?:\\.env.*|\\.git(?:/.*)?|\\.htaccess|\\.DS_Store|wp-admin.*|wp-login\\.php|xmlrpc\\.php|phpmyadmin.*|.*\\.(?:php|asp|aspx|jsp|cgi|sql|bak|old|ini|log|sh|ya?ml))$",
+      "mitigate": { "action": "deny" }
+    },
+    {
+      "src": "/api/.*",
+      "methods": ["GET", "HEAD", "PUT", "PATCH", "DELETE", "OPTIONS"],
+      "mitigate": { "action": "deny" }
+    },
+    {
+      "src": "/api/.*",
+      "missing": [{ "type": "header", "key": "sec-fetch-site", "value": "same-origin" }],
+      "mitigate": { "action": "deny" }
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "X-Frame-Options", "value": "DENY" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+        { "key": "Permissions-Policy", "value": "camera=(self), microphone=(), geolocation=(), payment=(), usb=()" }
+      ]
+    }
+  ],
+  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+}
