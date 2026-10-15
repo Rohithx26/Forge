@@ -101,6 +101,36 @@ const FB_C: DayTemplate = {
   exercises: [e('leg-press', 3, 8, 12, 120), e('incline-db-press', 3, 8, 12, 120), e('db-row', 3, 8, 12, 90), e('rdl', 2, 8, 10, 120), e('tricep-pushdown', 2, 10, 15, 60)]
 };
 
+/* ---- 4-day pairs: chest+tri / back+bi / shoulders+abs / legs ---- */
+const CHEST_TRI: DayTemplate = {
+  key: 'chestTri', name: 'Chest & Triceps', focus: 'Chest · Triceps',
+  exercises: [
+    e('incline-bench', 4, 6, 10, 150), e('db-bench', 3, 8, 12, 120), e('pec-deck', 3, 12, 15, 60), e('dips-chest', 3, 8, 12, 90),
+    e('skull-crusher', 3, 8, 12, 90), e('tricep-pushdown', 3, 10, 15, 60), e('db-overhead-extension', 2, 10, 15, 60)
+  ]
+};
+const BACK_BI: DayTemplate = {
+  key: 'backBi', name: 'Back & Biceps', focus: 'Back · Lats · Biceps',
+  exercises: [
+    e('chin-up', 3, 6, 10, 150), e('t-bar-row', 4, 6, 10, 150), e('close-grip-pulldown', 3, 10, 12, 90), e('chest-supported-row', 3, 10, 12, 90),
+    e('straight-arm-pulldown', 2, 12, 15, 60), e('preacher-curl', 3, 8, 12, 60), e('bayesian-curl', 3, 10, 15, 60), e('hammer-curl', 2, 10, 15, 60)
+  ]
+};
+const SHOULDERS_ABS: DayTemplate = {
+  key: 'shouldersAbs', name: 'Shoulders & Abs', focus: 'Delts · Abs',
+  exercises: [
+    e('machine-shoulder-press', 4, 8, 12, 120), e('arnold-press', 3, 8, 12, 90), e('cable-lateral-raise', 4, 12, 20, 60), e('rear-delt-fly', 3, 12, 20, 60),
+    e('upright-row', 2, 10, 15, 60), e('cable-crunch', 3, 10, 15, 60), e('hanging-leg-raise', 3, 10, 15, 60), e('ab-wheel', 2, 8, 12, 60)
+  ]
+};
+const LEGS_4: DayTemplate = {
+  key: 'legs', name: 'Legs', focus: 'Quads · Hamstrings · Glutes · Calves',
+  exercises: [
+    e('hack-squat', 4, 8, 12, 150), e('db-rdl', 3, 8, 12, 120), e('bulgarian-split-squat', 3, 8, 12, 90), e('hip-thrust', 3, 8, 12, 90),
+    e('seated-leg-curl', 3, 10, 15, 60), e('leg-extension', 3, 12, 15, 60), e('seated-calf-raise', 4, 12, 20, 60)
+  ]
+};
+
 export const SPLITS: Record<SplitId, SplitTemplate> = {
   ppl3: {
     id: 'ppl3', name: 'Push / Pull / Legs', short: 'PPL', daysPerWeek: 3, level: ['beginner', 'intermediate'],
@@ -127,6 +157,11 @@ export const SPLITS: Record<SplitId, SplitTemplate> = {
     description: 'Four days, each muscle twice a week. A balanced, proven split for strength and size.',
     rotation: ['upper', 'lower', 'rest', 'upper2', 'lower2', 'rest', 'rest'], days: [UPPER, LOWER, UPPER_B, LOWER_B]
   },
+  pairs4: {
+    id: 'pairs4', name: 'Chest·Tri / Back·Bi / Shoulders·Abs / Legs', short: '4-Day Pairs', daysPerWeek: 4, level: ['intermediate', 'advanced'],
+    description: 'Four training days, then a rest day, then repeat. Each muscle pair gets its own day.',
+    rotation: ['chestTri', 'backBi', 'shouldersAbs', 'legs', 'rest'], days: [CHEST_TRI, BACK_BI, SHOULDERS_ABS, LEGS_4]
+  },
   fullbody: {
     id: 'fullbody', name: 'Full Body', short: 'Full Body', daysPerWeek: 3, level: ['beginner'],
     description: 'Three whole-body sessions on alternating days. Best starting point for beginners.',
@@ -134,7 +169,7 @@ export const SPLITS: Record<SplitId, SplitTemplate> = {
   }
 };
 
-export const SPLIT_LIST: SplitTemplate[] = [SPLITS.ppl3, SPLITS.ppl6, SPLITS.bro, SPLITS.ula, SPLITS.ul, SPLITS.fullbody];
+export const SPLIT_LIST: SplitTemplate[] = [SPLITS.ppl3, SPLITS.ppl6, SPLITS.bro, SPLITS.ula, SPLITS.ul, SPLITS.pairs4, SPLITS.fullbody];
 
 export function recommendSplit(daysPerWeek: number, experience: string): SplitId {
   if (experience === 'beginner') return daysPerWeek >= 4 ? 'ul' : 'fullbody';

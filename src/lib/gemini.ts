@@ -18,7 +18,7 @@ export class GeminiError extends Error {
   constructor(message: string, public status: number) { super(message); }
 }
 
-const SYSTEM = `You are a nutrition estimator inside a gym tracking app. The user logs what they ate, either as a photo of the meal or a text description.
+export const SYSTEM = `You are a nutrition estimator inside a gym tracking app. The user logs what they ate, either as a photo of the meal or a text description.
 
 Break the meal into its individual foods and estimate, for each one, the portion and its calories, protein, carbohydrate and fat in grams. Base values on standard food composition data (USDA, and the Indian Food Composition Tables for Indian dishes). Account for cooking oil, ghee, butter, sugar and sauces that are typically used in a dish even when they aren't visible, because these are the most common source of under-counting.
 

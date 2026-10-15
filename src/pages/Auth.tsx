@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { backend, authErrorMessage } from '../lib/backend';
 import { Logo } from '../App';
+import { Alert } from '../components/ui';
 
 type Mode = 'signin' | 'signup' | 'reset';
 
@@ -52,8 +53,8 @@ export default function AuthPage() {
           {mode !== 'reset' && (
             <input className="field" type="password" placeholder="Password" required minLength={6} value={pw} onChange={(e) => setPw(e.target.value)} autoComplete={mode === 'signup' ? 'new-password' : 'current-password'} />
           )}
-          {error && <p className="text-sm text-bad">{error}</p>}
-          {info && <p className="text-sm text-good">{info}</p>}
+          {error && <Alert tone="error">{error}</Alert>}
+          {info && <Alert tone="success">{info}</Alert>}
           <button className="btn-primary w-full h-12" disabled={busy}>
             {busy ? 'Please wait…' : mode === 'signin' ? 'Sign in' : mode === 'signup' ? 'Create account' : 'Send reset link'}
           </button>

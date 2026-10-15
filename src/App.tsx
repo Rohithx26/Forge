@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { NavLink, Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { useStore } from './lib/store';
 import { backend } from './lib/backend';
-import { Icon } from './components/ui';
+import { Alert, Icon } from './components/ui';
 import AuthPage from './pages/Auth';
 import Onboarding from './pages/Onboarding';
 import Home from './pages/Home';
@@ -99,18 +99,18 @@ function LoadError({ code }: { code: string }) {
   return (
     <div className="h-full grid place-items-center px-6">
       <div className="card p-5 max-w-md space-y-3">
-        <div className="flex items-center gap-2 text-bad font-semibold"><Icon name="alert" />Couldn't load your data</div>
-        {denied ? (
+        <Alert tone="error" title="Couldn't load your data">
+          {denied ? <>Firestore refused access (<span className="font-mono">permission-denied</span>).</> : <>Error: <span className="font-mono">{code}</span></>}
+        </Alert>
+        {denied && (
           <>
-            <p className="text-sm text-muted">Firestore refused access (<span className="font-mono">permission-denied</span>). The project's security rules haven't been published yet. To fix it:</p>
+            <p className="text-sm text-muted">The project's security rules haven't been published yet. To fix it:</p>
             <ol className="text-sm list-decimal pl-5 space-y-1">
               <li>Open the Firebase console → <b>Firestore Database → Rules</b>.</li>
               <li>Replace the rules with the contents of <span className="font-mono">firestore.rules</span> from this project.</li>
               <li>Click <b>Publish</b>, then Retry.</li>
             </ol>
           </>
-        ) : (
-          <p className="text-sm text-muted">Error: <span className="font-mono">{code}</span></p>
         )}
         <div className="flex gap-2 pt-1">
           <button className="btn-primary flex-1" onClick={() => location.reload()}>Retry</button>

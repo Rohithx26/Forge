@@ -131,3 +131,23 @@ describe('neglected muscles', () => {
     expect(r).not.toContain('chest');
   });
 });
+
+describe('split templates', () => {
+  it('only use exercises that exist and rotate through their own days', () => {
+    const ids = new Set(EXERCISES.map((x) => x.id));
+    for (const s of Object.values(SPLITS)) {
+      for (const d of s.days) for (const t of d.exercises) expect(ids, `${s.id}/${d.key}`).toContain(t.exerciseId);
+      for (const k of s.rotation) if (k !== 'rest') expect(s.days.map((d) => d.key), s.id).toContain(k);
+    }
+  });
+
+  it('4-day pairs runs chest/tri → back/bi → shoulders/abs → legs → rest, then repeats', () => {
+    const s = SPLITS.pairs4;
+    const W2 = (id: string, date: string, key: string) => W(id, date, key, 'pairs4');
+    expect(suggestToday(s, [], '2026-10-15').dayKey).toBe('chestTri');
+    expect(suggestToday(s, [W2('a', '2026-10-12', 'chestTri'), W2('b', '2026-10-13', 'backBi'), W2('c', '2026-10-14', 'shouldersAbs')], '2026-10-15').dayKey).toBe('legs');
+    const all = [W2('a', '2026-10-11', 'chestTri'), W2('b', '2026-10-12', 'backBi'), W2('c', '2026-10-13', 'shouldersAbs'), W2('d', '2026-10-14', 'legs')];
+    expect(suggestToday(s, all, '2026-10-15').dayKey).toBe('rest');
+    expect(suggestToday(s, all, '2026-10-16').dayKey).toBe('chestTri'); // 2 days off: the gap counted as rest
+  });
+});

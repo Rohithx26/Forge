@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { registerSW } from 'virtual:pwa-register';
 import App from './App';
 import { StoreProvider } from './lib/store';
+import { DialogHost } from './components/ui';
 import './index.css';
 
 registerSW({ immediate: true });
@@ -13,6 +14,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     <BrowserRouter>
       <StoreProvider>
         <App />
+        <DialogHost />
       </StoreProvider>
     </BrowserRouter>
   </React.StrictMode>

@@ -5,7 +5,7 @@ import { bmi, e1rm, round } from '../lib/calc';
 import { addDays, bestsFor, isoDate, movingAverage, setsPerMuscle, TRACKED_MUSCLES, weekStart, workoutVolume } from '../lib/training';
 import { prTimeline } from '../lib/session';
 import { MUSCLE_LABEL } from '../data/exercises';
-import { Empty, Icon, Segmented, fmtDate } from '../components/ui';
+import { Empty, Icon, Segmented, confirmDialog, fmtDate } from '../components/ui';
 import { WeighInSheet } from './Home';
 
 type Tab = 'body' | 'lifts' | 'weekly' | 'prs';
@@ -110,7 +110,7 @@ function BodyTab() {
             <div key={x.id} className="flex items-center px-4 py-2.5 text-sm">
               <span className="flex-1 text-muted">{fmtDate(x.date)}</span>
               <span className="font-mono mr-3">{w(x.weightKg)} {wUnit}</span>
-              <button className="text-muted hover:text-bad" aria-label="Delete entry" onClick={() => confirm('Delete this weigh-in?') && deleteWeight(x.id)}><Icon name="trash" className="w-4 h-4" /></button>
+              <button className="text-muted hover:text-bad" aria-label="Delete entry" onClick={async () => (await confirmDialog({ title: 'Delete this weigh-in?', message: `${w(x.weightKg)} ${wUnit} on ${fmtDate(x.date)}`, confirmLabel: 'Delete', danger: true })) && deleteWeight(x.id)}><Icon name="trash" className="w-4 h-4" /></button>
             </div>
           ))}
         </div>

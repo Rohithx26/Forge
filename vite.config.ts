@@ -4,7 +4,7 @@ import { VitePWA } from 'vite-plugin-pwa';
 import { handleFoodRequest } from './server/food.js';
 
 /** serves /api/food during `npm run dev`; in production the Netlify / Vercel function does */
-function foodApi(env: { apiKey?: string; projectId?: string }): Plugin {
+function foodApi(env: { apiKey?: string; groqKey?: string; projectId?: string }): Plugin {
   return {
     name: 'forge-food-api',
     configureServer(server) {
@@ -26,7 +26,7 @@ export default defineConfig(({ mode }) => {
   return {
   plugins: [
     react(),
-    foodApi({ apiKey: env.GEMINI_API_KEY, projectId: env.VITE_FIREBASE_PROJECT_ID }),
+    foodApi({ apiKey: env.GEMINI_API_KEY, groqKey: env.GROQ_API_KEY, projectId: env.VITE_FIREBASE_PROJECT_ID }),
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['icon.svg'],

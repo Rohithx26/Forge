@@ -68,6 +68,69 @@ export function Sheet({ open, onClose, title, children, wide }: { open: boolean;
   );
 }
 
+/* -------- alerts -------- */
+const TONE = {
+  info: { box: 'bg-raised border-line text-ink', icon: 'info', iconColor: 'text-muted' },
+  success: { box: 'bg-good/10 border-good/30 text-good', icon: 'check', iconColor: 'text-good' },
+  warn: { box: 'bg-warn/10 border-warn/30 text-warn', icon: 'alert', iconColor: 'text-warn' },
+  error: { box: 'bg-bad/10 border-bad/30 text-bad', icon: 'alert', iconColor: 'text-bad' }
+} as const;
+
+/** Inline message box for every info / success / warning / error in the app. */
+export function Alert({ tone = 'info', title, children, className = '' }: { tone?: keyof typeof TONE; title?: ReactNode; children?: ReactNode; className?: string }) {
+  const t = TONE[tone];
+  return (
+    <div role={tone === 'error' || tone === 'warn' ? 'alert' : 'status'} className={`flex gap-2.5 rounded-xl border px-3 py-2.5 text-xs leading-relaxed ${t.box} ${className}`}>
+      <Icon name={t.icon} className={`w-4 h-4 mt-px ${t.iconColor}`} />
+      <div className="min-w-0">
+        {title && <div className="font-semibold text-[13px]">{title}</div>}
+        {children && <div className={title ? 'opacity-90 mt-0.5' : ''}>{children}</div>}
+      </div>
+    </div>
+  );
+}
+
+/* -------- confirm dialog: `if (await confirmDialog({...}))` replaces window.confirm -------- */
+interface Ask { title: string; message?: ReactNode; confirmLabel?: string; danger?: boolean }
+let showAsk: ((a: (Ask & { resolve: (ok: boolean) => void }) | null) => void) | null = null;
+
+export function confirmDialog(a: Ask): Promise<boolean> {
+  return new Promise((resolve) => (showAsk ? showAsk({ ...a, resolve }) : resolve(window.confirm(a.title))));
+}
+
+/** Mount once at the app root. */
+export function DialogHost() {
+  const [ask, setAsk] = useState<(Ask & { resolve: (ok: boolean) => void }) | null>(null);
+  useEffect(() => { showAsk = setAsk; return () => { showAsk = null; }; }, []);
+  const close = (ok: boolean) => { ask?.resolve(ok); setAsk(null); };
+  useEffect(() => {
+    if (!ask) return;
+    // capture + stop so Escape doesn't also close a Sheet underneath
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') { e.stopPropagation(); close(false); } };
+    window.addEventListener('keydown', onKey, true);
+    return () => window.removeEventListener('keydown', onKey, true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ask]);
+  if (!ask) return null;
+  return (
+    <div className="fixed inset-0 z-[70] grid place-items-center p-4" role="alertdialog" aria-modal aria-labelledby="dlg-title">
+      <button className="absolute inset-0 bg-black/60 backdrop-blur-[2px]" onClick={() => close(false)} aria-label="Cancel" />
+      <div className="relative w-full max-w-sm card p-5 shadow-2xl animate-pop">
+        <div className={`w-11 h-11 rounded-2xl grid place-items-center mb-3 ${ask.danger ? 'bg-bad/15 text-bad' : 'bg-accent/15 text-accent'}`}>
+          <Icon name={ask.danger ? 'trash' : 'info'} />
+        </div>
+        <div id="dlg-title" className="font-display text-xl font-bold uppercase tracking-wide leading-tight">{ask.title}</div>
+        {ask.message && <div className="text-sm text-muted mt-1.5">{ask.message}</div>}
+        <div className="flex gap-2 mt-5">
+          {/* focus Cancel on destructive dialogs so Enter doesn't delete by accident */}
+          <button className="btn-ghost flex-1" autoFocus={ask.danger} onClick={() => close(false)}>Cancel</button>
+          <button className={`${ask.danger ? 'btn-danger' : 'btn-primary'} flex-1`} autoFocus={!ask.danger} onClick={() => close(true)}>{ask.confirmLabel ?? 'OK'}</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function Segmented<T extends string>({ value, options, onChange, size = 'md' }: { value: T; options: { value: T; label: ReactNode }[]; onChange: (v: T) => void; size?: 'sm' | 'md' }) {
   return (
     <div className="flex p-1 bg-raised rounded-xl border border-line gap-1">

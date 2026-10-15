@@ -5,7 +5,7 @@ import { energyForProfile } from '../lib/calc';
 import { addDays, isoDate } from '../lib/training';
 import { MEALS, dayTotals, estimateFood, mealForHour, photoToJpeg, sumItems, weekSummary, type Totals } from '../lib/food';
 import type { FoodEntry, FoodEstimate, FoodItem, MealType } from '../lib/types';
-import { Empty, Icon, NumInput, Ring, Segmented, Sheet, Toast, fmtDate } from '../components/ui';
+import { Alert, Empty, Icon, NumInput, Ring, Segmented, Sheet, Toast, confirmDialog, fmtDate } from '../components/ui';
 import { FOOD_HISTORY_DAYS } from '../lib/backend';
 
 type Mode = 'photo' | 'text' | 'manual';
@@ -84,7 +84,7 @@ export default function FoodPage() {
                     ))}
                     <div className="flex items-center justify-between mt-1 text-[11px] text-muted">
                       <span>{e.source === 'photo' ? 'From photo' : e.source === 'text' ? 'From description' : 'Manual'} · P {Math.round(sumItems(e.items).proteinG)} · C {Math.round(sumItems(e.items).carbsG)} · F {Math.round(sumItems(e.items).fatG)}</span>
-                      <button className="hover:text-bad" aria-label="Delete entry" onClick={() => confirm('Delete this entry?') && deleteFood(e.id)}><Icon name="trash" className="w-4 h-4" /></button>
+                      <button className="hover:text-bad" aria-label="Delete entry" onClick={async () => (await confirmDialog({ title: 'Delete this meal?', message: `${e.items.map((i) => i.name).join(', ')} · ${Math.round(sumItems(e.items).kcal)} kcal`, confirmLabel: 'Delete', danger: true })) && deleteFood(e.id)}><Icon name="trash" className="w-4 h-4" /></button>
                     </div>
                   </div>
                 ))}
@@ -97,7 +97,7 @@ export default function FoodPage() {
       <WeekCard date={date} target={target} />
 
       {logMode && <LogFoodSheet key={logMode} date={date} initialMode={logMode} onClose={() => setLogMode(null)} onSaveError={setToast} />}
-      {toast && <Toast message={<span className="text-bad">{toast}</span>} onDone={() => setToast(null)} />}
+      {toast && <Toast message={<Alert tone="error" className="border-0 p-0 bg-transparent">{toast}</Alert>} onDone={() => setToast(null)} />}
     </div>
   );
 }
@@ -239,7 +239,7 @@ function LogFoodSheet({ date, initialMode, onClose, onSaveError }: { date: strin
               </div>
             )}
 
-            {error && <div className="flex gap-2 text-xs text-bad bg-bad/10 rounded-lg p-2.5"><Icon name="alert" className="w-4 h-4 shrink-0" /><span>{error} {mode !== 'manual' && <button className="underline font-semibold" onClick={() => { setMode('manual'); setItems([blankItem()]); setError(''); }}>Enter manually</button>}</span></div>}
+            {error && <Alert tone="error" title="Couldn't estimate that">{error} {mode !== 'manual' && <button className="underline font-semibold" onClick={() => { setMode('manual'); setItems([blankItem()]); setError(''); }}>Enter manually</button>}</Alert>}
 
             <button className="btn-primary w-full h-12" disabled={busy || (mode === 'photo' ? !photo : text.trim().length < 2)} onClick={analyse}>
               {busy ? 'Estimating…' : <><Icon name="bolt" className="w-4 h-4" /> Estimate calories</>}
@@ -250,9 +250,9 @@ function LogFoodSheet({ date, initialMode, onClose, onSaveError }: { date: strin
         {items && (
           <>
             {estimate && (
-              <div className={`text-xs rounded-lg p-2.5 ${estimate.confidence === 'low' ? 'bg-warn/10 text-warn' : 'bg-raised text-muted'}`}>
-                <span className="font-semibold capitalize">{estimate.confidence} confidence.</span> {estimate.notes} Check the portions and edit anything that's off.
-              </div>
+              <Alert tone={estimate.confidence === 'low' ? 'warn' : 'info'} title={<span className="capitalize">{estimate.confidence} confidence</span>}>
+                {estimate.notes} Check the portions and edit anything that's off.
+              </Alert>
             )}
             <div className="space-y-3">
               {items.map((it, i) => (

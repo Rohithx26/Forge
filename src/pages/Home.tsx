@@ -5,7 +5,7 @@ import { isoDate, neglectedMuscles, suggestToday, weekStart, weekStreak, workout
 import { workoutFromDay, prTimeline } from '../lib/session';
 import { MUSCLE_LABEL } from '../data/exercises';
 import { BmiCard, CalorieCard } from '../components/Nutrition';
-import { Icon, Ring, Sheet, fmtDate } from '../components/ui';
+import { Icon, Ring, Sheet, confirmDialog, fmtDate } from '../components/ui';
 import { dayTotals } from '../lib/food';
 import { cardioPlan, isLowerDay } from '../lib/cardio';
 import { energyForProfile } from '../lib/calc';
@@ -32,14 +32,14 @@ export default function Home() {
   const eatenToday = dayTotals(store.food, today).kcal;
   const target = Math.round(energyForProfile(profile!).target);
 
-  function swap() {
+  async function swap() {
     const next = suggestToday(split!, workouts, today, offset + 1).dayKey;
     const name = next === 'rest' ? 'a rest day' : split!.days.find((d) => d.key === next)?.name ?? next;
-    if (confirm(`Swap today's workout from ${day?.name ?? 'rest'} to ${name}? It stays swapped for the rest of today.`)) setOffset(offset + 1);
+    if (await confirmDialog({ title: "Swap today's workout?", message: <>From <b className="text-ink">{day?.name ?? 'Rest'}</b> to <b className="text-ink">{name}</b>. It stays swapped for the rest of today.</>, confirmLabel: 'Swap' })) setOffset(offset + 1);
   }
 
-  function start(dayKey: string) {
-    if (active && !confirm('You have a workout in progress. Discard it and start a new one?')) return;
+  async function start(dayKey: string) {
+    if (active && !(await confirmDialog({ title: 'Discard workout in progress?', message: `"${active.title}" hasn't been saved. Starting a new workout throws it away.`, confirmLabel: 'Discard & start', danger: true }))) return;
     const w = workoutFromDay(split!, dayKey, workouts, exercises);
     saveActive(w);
     nav('/workout');

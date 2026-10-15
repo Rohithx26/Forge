@@ -1,6 +1,6 @@
 import { handleFoodRequest } from '../../server/food.js';
 
 export default (req: Request) =>
-  handleFoodRequest(req, { apiKey: process.env.GEMINI_API_KEY, projectId: process.env.VITE_FIREBASE_PROJECT_ID });
+  handleFoodRequest(req, { apiKey: process.env.GEMINI_API_KEY, groqKey: process.env.GROQ_API_KEY, projectId: process.env.VITE_FIREBASE_PROJECT_ID });
 
 export const config = { path: '/api/food' };

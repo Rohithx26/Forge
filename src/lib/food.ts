@@ -1,5 +1,5 @@
 import { addDays, isoDate, weekStart } from './training';
-import { geminiEstimate, type FoodInput } from './gemini';
+import { GeminiError, geminiEstimate, type FoodInput } from './gemini';
 import type { FoodEntry, FoodEstimate, FoodItem, MealType } from './types';
 
 export interface Totals { kcal: number; proteinG: number; carbsG: number; fatG: number }
@@ -81,7 +81,14 @@ export function setGeminiKey(k: string) {
 /** Uses the user's own key directly when set, otherwise the server's shared key via /api/food. */
 export async function estimateFood(input: FoodInput, apiKey = getGeminiKey()): Promise<FoodEstimate> {
   if (!navigator.onLine) throw new Error("You're offline. Food estimates need a connection — add it manually instead.");
-  if (apiKey) return geminiEstimate(apiKey, input);
+  if (apiKey) {
+    try {
+      return await geminiEstimate(apiKey, input);
+    } catch (e) {
+      // overloaded: fall through to the server, which has the Groq backup
+      if (!(e instanceof GeminiError) || e.status !== 503) throw e;
+    }
+  }
   // lazy: keeps this module (and its unit tests) free of Firebase start-up
   const { backend } = await import('./backend');
   const token = await backend.idToken();

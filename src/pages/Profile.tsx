@@ -7,7 +7,7 @@ import type { DayTemplate, Profile, SplitId } from '../lib/types';
 import { ActivityField, GoalField, HeightField, WeightField } from '../components/fields';
 import { BmiCard, CalorieCard } from '../components/Nutrition';
 import { ExercisePicker } from '../components/ExercisePicker';
-import { Disclaimer, Icon, NumInput, Segmented, Sheet } from '../components/ui';
+import { Alert, Disclaimer, Icon, NumInput, Segmented, Sheet } from '../components/ui';
 import { isoDate } from '../lib/training';
 import { estimateFood, getGeminiKey, setGeminiKey } from '../lib/food';
 
@@ -127,7 +127,7 @@ function FoodAiCard() {
           <button className="btn-ghost px-3 shrink-0" onClick={() => setShow(!show)}>{show ? 'Hide' : 'Show'}</button>
         </div>
       </div>
-      {status && <div className={`text-xs rounded-lg p-2.5 ${status.ok ? 'bg-good/10 text-good' : 'bg-bad/10 text-bad'}`}>{status.msg}</div>}
+      {status && <Alert tone={status.ok ? 'success' : 'error'}>{status.msg}</Alert>}
       <div className="flex gap-2">
         {saved && <button className="btn-ghost" onClick={() => { setGeminiKey(''); setSaved(''); setDraft(''); setStatus(null); }}>Remove</button>}
         <button className="btn-primary flex-1" disabled={!draft.trim() || testing || draft.trim() === saved} onClick={saveAndTest}>{testing ? 'Checking…' : 'Save & test key'}</button>

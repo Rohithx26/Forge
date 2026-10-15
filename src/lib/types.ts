@@ -3,7 +3,7 @@ export type ActivityLevel = 'sedentary' | 'light' | 'moderate' | 'very' | 'extra
 export type Goal = 'lose' | 'maintain' | 'gain';
 export type Experience = 'beginner' | 'intermediate' | 'advanced';
 export type UnitSystem = 'metric' | 'imperial';
-export type SplitId = 'ppl3' | 'ppl6' | 'bro' | 'ula' | 'ul' | 'fullbody';
+export type SplitId = 'ppl3' | 'ppl6' | 'bro' | 'ula' | 'ul' | 'pairs4' | 'fullbody';
 
 export type Muscle =
   | 'chest' | 'back' | 'lats' | 'traps' | 'shoulders' | 'rear-delts'

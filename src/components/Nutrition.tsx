@@ -1,6 +1,6 @@
 import { bmi, bmiCategory, energyForProfile, healthyWeightRange, round, ACTIVITY } from '../lib/calc';
 import type { Profile } from '../lib/types';
-import { Icon } from './ui';
+import { Alert } from './ui';
 
 const CAT_COLOR = { Underweight: 'text-warn', Normal: 'text-good', Overweight: 'text-warn', Obese: 'text-bad' } as const;
 
@@ -87,7 +87,7 @@ export function CalorieCard({ profile, detailed }: { profile: Profile; detailed?
       </div>
 
       {r.warnings.map((w) => (
-        <div key={w} className="flex gap-2 mt-3 text-xs text-warn bg-warn/10 rounded-lg p-2.5"><Icon name="alert" className="w-4 h-4 shrink-0" />{w}</div>
+        <Alert key={w} tone="warn" className="mt-3">{w}</Alert>
       ))}
 
       {detailed && (

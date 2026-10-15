@@ -6,7 +6,7 @@ import { blankWorkout, workoutFromDay } from '../lib/session';
 import type { PR, Workout } from '../lib/types';
 import { WorkoutEditor } from '../components/WorkoutEditor';
 import { RestTimer, unlockAudio } from '../components/RestTimer';
-import { Icon, Sheet, fmtDate, fmtDuration } from '../components/ui';
+import { Alert, Icon, Sheet, confirmDialog, fmtDate, fmtDuration } from '../components/ui';
 import { CardioCard, cardioSummary } from '../components/Cardio';
 
 export default function WorkoutPage() {
@@ -124,7 +124,7 @@ function HistorySheet({ workout, onClose }: { workout: Workout; onClose: () => v
           {cardioSummary(workout) && <div className="text-sm"><span className="font-semibold">Cardio</span> <span className="text-muted">· {cardioSummary(workout)}</span></div>}
           {workout.notes && <p className="text-sm bg-raised rounded-xl p-3 whitespace-pre-wrap">{workout.notes}</p>}
           <div className="flex gap-2 pt-2">
-            <button className="btn-danger" onClick={async () => { if (confirm('Delete this workout? This cannot be undone.')) { await deleteWorkout(workout.id); onClose(); } }}><Icon name="trash" className="w-4 h-4" /> Delete</button>
+            <button className="btn-danger" onClick={async () => { if (await confirmDialog({ title: 'Delete this workout?', message: `${workout.title} on ${fmtDate(workout.date)}. This can't be undone.`, confirmLabel: 'Delete', danger: true })) { await deleteWorkout(workout.id); onClose(); } }}><Icon name="trash" className="w-4 h-4" /> Delete</button>
             <button className="btn-ghost flex-1" onClick={() => setEdit(structuredClone(workout))}><Icon name="edit" className="w-4 h-4" /> Edit</button>
           </div>
         </div>
@@ -191,7 +191,7 @@ function ActiveSession({ workout, setWorkout, onFinished }: { workout: Workout; 
 
       <textarea className="field h-20 py-2" placeholder="Session notes (sleep, energy, pain…)" value={workout.notes} onChange={(e) => setWorkout({ ...workout, notes: e.target.value })} />
 
-      <button className="btn-danger w-full" onClick={() => { if (confirm('Discard this workout? Nothing will be saved.')) { saveActive(null); setWorkout(null as any); nav('/'); } }}>
+      <button className="btn-danger w-full" onClick={async () => { if (await confirmDialog({ title: 'Discard this workout?', message: 'Nothing from this session will be saved.', confirmLabel: 'Discard', danger: true })) { saveActive(null); setWorkout(null as any); nav('/'); } }}>
         Discard workout
       </button>
 
@@ -206,8 +206,9 @@ function ActiveSession({ workout, setWorkout, onFinished }: { workout: Workout; 
 
       <Sheet open={confirmFinish} onClose={() => setConfirmFinish(false)} title="Finish workout?">
         <div className="space-y-4">
-          {done < total && <p className="text-sm text-muted">{total - done} set{total - done === 1 ? '' : 's'} not ticked off. Unticked sets won't be saved.</p>}
-          {done === 0 && <p className="text-sm text-warn">You haven't completed any sets yet.</p>}
+          {done === 0
+            ? <Alert tone="warn" title="No sets completed yet">Tick off at least one set to save this workout.</Alert>
+            : done < total && <Alert tone="info">{total - done} set{total - done === 1 ? '' : 's'} not ticked off. Unticked sets won't be saved.</Alert>}
           <div className="flex gap-2">
             <button className="btn-ghost flex-1" onClick={() => setConfirmFinish(false)}>Keep going</button>
             <button className="btn-primary flex-1" disabled={done === 0 || saving} onClick={finish}>{saving ? 'Saving…' : 'Save workout'}</button>
