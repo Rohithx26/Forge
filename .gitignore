@@ -1,0 +1,27 @@
+# dependencies
+node_modules
+
+# build output
+dist
+dev-dist
+*.tsbuildinfo
+coverage
+
+# secrets — set these in Vercel instead
+.env
+.env.*
+!.env.example
+
+# hosting CLIs
+.vercel
+.netlify
+
+# logs
+*.log
+npm-debug.log*
+
+# editor / OS
+.vscode
+.idea
+.DS_Store
+Thumbs.db
