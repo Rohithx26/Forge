@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { NavLink, Navigate, Route, Routes, useLocation } from 'react-router-dom';
+import { Analytics } from '@vercel/analytics/react';
 import { useStore } from './lib/store';
 import { backend } from './lib/backend';
 import { Alert, Icon } from './components/ui';
@@ -37,6 +38,7 @@ export default function App() {
         </Routes>
       </main>
       <BottomNav />
+      <Analytics />
     </div>
   );
 }
