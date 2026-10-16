@@ -16,10 +16,30 @@ import ProfilePage from './pages/Profile';
 export default function App() {
   const { user, authReady, dataReady, profile, loadError } = useStore();
 
-  if (user && loadError) return <LoadError code={loadError} />;
-  if (!authReady || (user && !dataReady)) return <Splash slowHint={!!user} />;
-  if (!user) return <AuthPage />;
-  if (!profile) return <Onboarding />;
+  if (user && loadError) return (
+    <>
+      <LoadError code={loadError} />
+      <Analytics />
+    </>
+  );
+  if (!authReady || (user && !dataReady)) return (
+    <>
+      <Splash slowHint={!!user} />
+      <Analytics />
+    </>
+  );
+  if (!user) return (
+    <>
+      <AuthPage />
+      <Analytics />
+    </>
+  );
+  if (!profile) return (
+    <>
+      <Onboarding />
+      <Analytics />
+    </>
+  );
 
   return (
     <div className="min-h-full">
