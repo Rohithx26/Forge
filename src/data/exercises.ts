@@ -125,3 +125,43 @@ export const MUSCLE_LABEL: Record<Muscle, string> = {
 export const EQUIPMENT_LABEL: Record<Equipment, string> = {
   barbell: 'Barbell', dumbbell: 'Dumbbell', machine: 'Machine', cable: 'Cable', bodyweight: 'Bodyweight', kettlebell: 'Kettlebell', smith: 'Smith', band: 'Band'
 };
+
+export interface WarmupDrill { name: string; sec: number; how: string }
+
+const PULSE: WarmupDrill = { name: 'Jumping jacks', sec: 60, how: 'Easy pace, get the heart rate up' };
+const ARM_CIRCLES: WarmupDrill = { name: 'Arm circles', sec: 30, how: '15 sec forward, 15 sec back, small to big' };
+const CAT_COW: WarmupDrill = { name: 'Cat-cow', sec: 30, how: 'On all fours, slowly round then arch the spine' };
+const HIP_CIRCLES: WarmupDrill = { name: 'Hip circles', sec: 30, how: 'Hands on hips, big slow circles both ways' };
+const BW_SQUAT: WarmupDrill = { name: 'Bodyweight squats', sec: 45, how: 'Slow, full depth, pause at the bottom' };
+
+// Each routine is 5 min (300 sec) of light, dynamic movement — no static holds before lifting.
+const WARMUPS: Record<'upper' | 'lower' | 'full', WarmupDrill[]> = {
+  upper: [
+    PULSE, ARM_CIRCLES, CAT_COW,
+    { name: 'Band pull-aparts / dislocates', sec: 45, how: 'Band or broomstick, arms straight, over and back' },
+    { name: 'Thoracic rotations', sec: 45, how: 'On all fours, hand behind head, rotate elbow to the ceiling' },
+    { name: 'Scap push-ups', sec: 45, how: 'Arms locked, let the chest sink then push the floor away' },
+    { name: 'Push-up to down dog', sec: 45, how: 'One easy push-up, then hips up and back' }
+  ],
+  lower: [
+    { name: 'March / jog in place', sec: 60, how: 'Knees up, easy pace' },
+    { name: 'Leg swings (front–back)', sec: 45, how: 'Hold a wall, ~10 per leg, grow the range' },
+    { name: 'Leg swings (side–side)', sec: 45, how: 'Face the wall, ~10 per leg' },
+    HIP_CIRCLES, BW_SQUAT,
+    { name: 'Glute bridges', sec: 30, how: 'Squeeze glutes 1 sec at the top' },
+    { name: 'Walking lunges', sec: 45, how: 'Bodyweight, long stride, stay tall' }
+  ],
+  full: [
+    PULSE, ARM_CIRCLES, CAT_COW,
+    { name: 'Leg swings', sec: 45, how: 'Hold a wall, front–back, ~10 per leg' },
+    HIP_CIRCLES, BW_SQUAT,
+    { name: 'Inchworms', sec: 60, how: 'Walk hands out to a plank, walk feet in, stand' }
+  ]
+};
+
+/** 5-min warm-up matched to the body regions trained today (core-only/mixed/empty → full body). */
+export function warmupFor(regions: Exercise['region'][]): { title: string; drills: WarmupDrill[] } {
+  const up = regions.includes('upper'), low = regions.includes('lower');
+  const key = up && !low ? 'upper' : low && !up ? 'lower' : 'full';
+  return { title: { upper: 'Upper-body warm-up', lower: 'Lower-body warm-up', full: 'Full-body warm-up' }[key], drills: WARMUPS[key] };
+}

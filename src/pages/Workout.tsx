@@ -8,6 +8,7 @@ import { WorkoutEditor } from '../components/WorkoutEditor';
 import { RestTimer, unlockAudio } from '../components/RestTimer';
 import { Alert, Icon, Sheet, confirmDialog, fmtDate, fmtDuration } from '../components/ui';
 import { CardioCard, cardioSummary } from '../components/Cardio';
+import { warmupFor } from '../data/exercises';
 
 export default function WorkoutPage() {
   const [active, setActiveState] = useState<Workout | null>(() => loadActive());
@@ -179,6 +180,8 @@ function ActiveSession({ workout, setWorkout, onFinished }: { workout: Workout; 
         <button className="btn-primary h-10" onClick={() => setConfirmFinish(true)}>Finish</button>
       </header>
 
+      <WarmupCard workout={workout} />
+
       <WorkoutEditor
         workout={workout}
         onChange={setWorkout}
@@ -216,6 +219,51 @@ function ActiveSession({ workout, setWorkout, onFinished }: { workout: Workout; 
         </div>
       </Sheet>
     </div>
+  );
+}
+
+/* ---------------- warm-up ---------------- */
+function WarmupCard({ workout }: { workout: Workout }) {
+  const { exercises } = useStore();
+  const { title, drills } = warmupFor(workout.exercises.map((e) => exercises.get(e.exerciseId)?.region ?? 'core'));
+  // shortcut: ticks live in component state and reset on reload; store them on the Workout if that bothers users
+  const [ticked, setTicked] = useState<Set<number>>(new Set());
+  const [open, setOpen] = useState(true);
+  const allDone = ticked.size === drills.length;
+  const toggle = (i: number) => {
+    const n = new Set(ticked);
+    if (n.has(i)) n.delete(i); else n.add(i);
+    setTicked(n);
+    if (n.size === drills.length) setOpen(false);
+  };
+
+  return (
+    <section className={`card p-4 ${allDone ? 'border-good/60' : ''}`}>
+      <button className="w-full flex items-start justify-between gap-3 text-left" onClick={() => setOpen(!open)} aria-expanded={open}>
+        <div>
+          <div className="eyebrow">Warm-up · 5 min</div>
+          <div className="font-display text-2xl font-bold uppercase leading-none mt-1">{title}</div>
+          <div className="text-xs text-muted mt-1">{allDone ? 'Loosened up. Go lift.' : `${ticked.size}/${drills.length} drills · loosen up before your first set`}</div>
+        </div>
+        <Icon name="chevron" className={`w-5 h-5 text-muted shrink-0 transition ${open ? 'rotate-90' : ''}`} />
+      </button>
+      {open && (
+        <ul className="mt-3 space-y-1.5">
+          {drills.map((d, i) => (
+            <li key={d.name}>
+              <button className="w-full flex items-center gap-3 text-left py-1" onClick={() => toggle(i)} aria-pressed={ticked.has(i)}>
+                <span className={`w-6 h-6 shrink-0 rounded-md grid place-items-center ${ticked.has(i) ? 'bg-good text-black' : 'bg-raised text-muted'}`}><Icon name="check" className="w-4 h-4" /></span>
+                <span className="flex-1 min-w-0">
+                  <span className={`block text-sm font-semibold ${ticked.has(i) ? 'line-through text-muted' : ''}`}>{d.name}</span>
+                  <span className="block text-xs text-muted">{d.how}</span>
+                </span>
+                <span className="font-mono text-xs text-muted">{d.sec}s</span>
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
   );
 }
 
