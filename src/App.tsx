@@ -1,19 +1,25 @@
-import { useEffect, useState } from 'react';
+import { Suspense, lazy, useEffect, useState } from 'react';
 import { NavLink, Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { Analytics } from '@vercel/analytics/react';
 import { useStore } from './lib/store';
 import { backend } from './lib/backend';
 import { Alert, Icon } from './components/ui';
-import AuthPage from './pages/Auth';
-import Onboarding from './pages/Onboarding';
 import Home from './pages/Home';
-import WorkoutPage from './pages/Workout';
-import ProgressPage from './pages/Progress';
-import FoodPage from './pages/Food';
-import LibraryPage from './pages/Library';
-import ProfilePage from './pages/Profile';
+
+// split per page so the first paint doesn't wait on code (e.g. recharts) for screens not open yet
+const AuthPage = lazy(() => import('./pages/Auth'));
+const Onboarding = lazy(() => import('./pages/Onboarding'));
+const WorkoutPage = lazy(() => import('./pages/Workout'));
+const ProgressPage = lazy(() => import('./pages/Progress'));
+const FoodPage = lazy(() => import('./pages/Food'));
+const LibraryPage = lazy(() => import('./pages/Library'));
+const ProfilePage = lazy(() => import('./pages/Profile'));
 
 export default function App() {
+  return <Suspense fallback={<Splash />}><Screens /></Suspense>;
+}
+
+function Screens() {
   const { user, authReady, dataReady, profile, loadError } = useStore();
 
   if (user && loadError) return <LoadError code={loadError} />;
@@ -27,6 +33,7 @@ export default function App() {
         <div className="bg-warn/15 text-warn text-[11px] font-semibold text-center py-1 px-3">Demo mode — data is saved on this device only. Add Firebase keys to enable accounts &amp; sync.</div>
       )}
       <main className="max-w-xl mx-auto px-4 pt-5 pb-28">
+        <Suspense fallback={null}>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/workout" element={<WorkoutPage />} />
@@ -36,6 +43,7 @@ export default function App() {
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
+        </Suspense>
       </main>
       <BottomNav />
       <Analytics />
