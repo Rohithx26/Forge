@@ -17,7 +17,7 @@ const PULL: DayTemplate = {
   key: 'pull', name: 'Pull', focus: 'Back · Rear delts · Biceps',
   exercises: [
     e('pull-up', 3, 6, 10, 150), e('barbell-row', 4, 6, 10, 150), e('lat-pulldown', 3, 10, 12, 90),
-    e('seated-cable-row', 3, 10, 12, 90), e('face-pull', 3, 12, 20, 60), e('ez-curl', 3, 8, 12, 60), e('hammer-curl', 2, 10, 15, 60)
+    e('seated-cable-row', 3, 10, 12, 90), e('machine-pullover', 3, 10, 15, 75), e('face-pull', 3, 12, 20, 60), e('ez-curl', 3, 8, 12, 60), e('hammer-curl', 2, 10, 15, 60)
   ]
 };
 const LEGS: DayTemplate = {
@@ -45,7 +45,7 @@ const LOWER: DayTemplate = {
 const UPPER_B: DayTemplate = {
   key: 'upper2', name: 'Upper B', focus: 'Back · Chest · Shoulders',
   exercises: [
-    e('pull-up', 4, 6, 10, 150), e('incline-db-press', 4, 8, 12, 120), e('chest-supported-row', 3, 8, 12, 90),
+    e('pull-up', 4, 6, 10, 150), e('incline-db-press', 4, 8, 12, 120), e('chest-supported-row', 3, 8, 12, 90), e('machine-pullover', 2, 10, 15, 75),
     e('db-shoulder-press', 3, 8, 12, 90), e('cable-fly', 3, 12, 15, 60), e('face-pull', 3, 12, 20, 60)
   ]
 };
@@ -72,7 +72,7 @@ const CHEST: DayTemplate = {
 };
 const BACK: DayTemplate = {
   key: 'back', name: 'Back', focus: 'Back · Lats · Traps',
-  exercises: [e('deadlift', 3, 3, 6, 210), e('pull-up', 4, 6, 10, 150), e('barbell-row', 4, 6, 10, 150), e('lat-pulldown', 3, 10, 12, 90), e('seated-cable-row', 3, 10, 12, 90), e('db-shrug', 3, 10, 15, 60)]
+  exercises: [e('deadlift', 3, 3, 6, 210), e('pull-up', 4, 6, 10, 150), e('barbell-row', 4, 6, 10, 150), e('lat-pulldown', 3, 10, 12, 90), e('seated-cable-row', 3, 10, 12, 90), e('machine-pullover', 3, 10, 15, 75), e('db-shrug', 3, 10, 15, 60)]
 };
 const SHOULDERS: DayTemplate = {
   key: 'shoulders', name: 'Shoulders', focus: 'Delts · Traps',
@@ -113,7 +113,7 @@ const BACK_BI: DayTemplate = {
   key: 'backBi', name: 'Back & Biceps', focus: 'Back · Lats · Biceps',
   exercises: [
     e('chin-up', 3, 6, 10, 150), e('t-bar-row', 4, 6, 10, 150), e('close-grip-pulldown', 3, 10, 12, 90), e('chest-supported-row', 3, 10, 12, 90),
-    e('straight-arm-pulldown', 2, 12, 15, 60), e('preacher-curl', 3, 8, 12, 60), e('bayesian-curl', 3, 10, 15, 60), e('hammer-curl', 2, 10, 15, 60)
+    e('machine-pullover', 3, 10, 15, 75), e('straight-arm-pulldown', 2, 12, 15, 60), e('preacher-curl', 3, 8, 12, 60), e('bayesian-curl', 3, 10, 15, 60), e('hammer-curl', 2, 10, 15, 60)
   ]
 };
 const SHOULDERS_ABS: DayTemplate = {

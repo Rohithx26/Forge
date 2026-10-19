@@ -29,6 +29,7 @@ const rows: Row[] = [
   ['chin-up', 'Chin-Up', ['lats', 'biceps'], ['back'], 'bodyweight', 'upper', true, ['Palms facing you', 'Chin over bar', 'Full extension each rep']],
   ['lat-pulldown', 'Lat Pulldown', ['lats'], ['biceps', 'back'], 'cable', 'upper', true, ['Slight lean back', 'Pull bar to upper chest', 'Elbows drive down']],
   ['close-grip-pulldown', 'Close-Grip Pulldown', ['lats'], ['biceps'], 'cable', 'upper', true, ['V-handle', 'Elbows tight to body', 'Stretch at the top']],
+  ['machine-pullover', 'Machine Lat Pullover', ['lats'], ['chest', 'triceps'], 'machine', 'upper', false, ['Adjust seat so shoulders line up with the pivot', 'Drive with the elbows, not the hands', 'Sweep down until the pad nears your torso, squeeze lats', 'Control the stretch overhead — don\'t let the stack yank you']],
   ['straight-arm-pulldown', 'Straight-Arm Pulldown', ['lats'], [], 'cable', 'upper', false, ['Arms nearly straight', 'Sweep bar to thighs', 'Feel the lats']],
   ['rack-pull', 'Rack Pull', ['back', 'traps'], ['glutes', 'hamstrings', 'forearms'], 'barbell', 'lower', true, ['Bar just below knees', 'Lock out with glutes', 'Neutral spine']],
   ['shrug', 'Barbell Shrug', ['traps'], ['forearms'], 'barbell', 'upper', false, ['Straight up toward ears', 'Pause at top', 'No rolling']],
